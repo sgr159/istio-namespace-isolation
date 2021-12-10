@@ -1,0 +1,14 @@
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: allow-traffic-from-istio-ns
+  namespace: multi-tenant
+spec:
+  selector:
+    matchLabels:
+      app: fs-mt
+  action: ALLOW
+  rules:
+  - from:
+    - source:
+        namespaces: ["istio-system"]

@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: fs-gateway
+spec:
+  selector:
+    istio: ingressgateway # use Istio default gateway implementation
+  servers:
+  # Accept http requests sent on port 80 with Host headers set to either fs-mt.com or fs.com
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "fs-mt.com"
+    - "fs.com"

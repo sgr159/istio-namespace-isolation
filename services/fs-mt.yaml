@@ -1,0 +1,47 @@
+# FS-mt service definition for multi-tenant namespace.
+apiVersion: v1
+kind: Service
+metadata:
+  name: fs-mt
+spec:
+  selector:
+    app: fs-mt
+  ports:
+    - port: 9091
+      targetPort: 9091
+      name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fs-mt
+  labels:
+    app: fs-mt
+spec:
+  selector:
+    matchLabels:
+      app: fs-mt
+  template:
+    metadata:
+      labels:
+        app: fs-mt
+    spec:
+      containers:
+        - name: api
+          image: nicholasjackson/fake-service:v0.7.8
+          ports:
+            - containerPort: 9091
+          env:
+            - name: 'LISTEN_ADDR'
+              value: '0.0.0.0:9091'
+            - name: 'NAME'
+              value: 'multi-tenant'
+            - name: 'MESSAGE'
+              value: 'Response from multi-tenant fs'
+            # Call fs service. Notice how there is nothing here which suggests that this is a tenant specific service.
+            # Later if this service becomes multi-tenant, this call won't have to change at all.
+            # tenant-id header needs to be passed in the request.
+            - name: 'UPSTREAM_URIS'
+              value: 'http://fs.com' 
+
+
